@@ -3,7 +3,9 @@ const cors = require("cors");
 require("dotenv").config();
 require("./config/db");
 
-// const authRoutes = require("./routes/auth.routes");
+const authRoutes = require("./routes/auth.routes");
+const projectRoutes = require("./routes/project.routes");
+const reviewRoutes = require("./routes/review.routes");
 
 const app = express();
 
@@ -17,7 +19,9 @@ app.get("/", (req, res) => {
 });
 
 // Feature routes
-// app.use("/api/auth", authRoutes);
+app.use("/api/auth", authRoutes);
+// app.use("/api/projects", projectRoutes);
+// app.use("/api/reviews", reviewRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
