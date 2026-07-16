@@ -13,8 +13,8 @@ const app = express();
 app.use(cors({
   origin: process.env.FRONTEND_URL || "*",
   credentials: true,
-}));                         // allows frontend (different port) to call this API
-app.use(express.json());     // allows server to read JSON in request body
+}));                          // allows frontend (different port) to call this API
+app.use(express.json());      // allows server to read JSON in request body
 
 // Health check route — visit this to confirm server is running
 app.get("/", (req, res) => {
