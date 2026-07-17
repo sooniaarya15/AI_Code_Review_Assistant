@@ -10,10 +10,15 @@ const reviewRoutes = require("./routes/review.routes");
 const app = express();
 
 // Middleware
+const allowedOrigins = [
+  "http://localhost:3000",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "*",
+  origin: allowedOrigins,
   credentials: true,
-}));                          // allows frontend (different port) to call this API
+}));                        // allows frontend (different port) to call this API
 app.use(express.json());      // allows server to read JSON in request body
 
 // Health check route — visit this to confirm server is running
