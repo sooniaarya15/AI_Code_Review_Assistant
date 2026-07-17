@@ -1,9 +1,10 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const pool = require("../config/db");
 require("dotenv").config();
 
-// ---------- SIGN UP ----------
+const NAME_REGEX = /^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/;
+
 async function signup(req, res) {
   try {
     const { name, email, password } = req.body;
@@ -12,18 +13,24 @@ async function signup(req, res) {
       return res.status(400).json({ error: "Name, email and password are required." });
     }
 
-    // check if user already exists
+    const trimmedName = name.trim();
+
+    if (trimmedName.length < 2 || trimmedName.length > 50 || !NAME_REGEX.test(trimmedName)) {
+      return res.status(400).json({
+        error: "Invalid name — only letters and single spaces between words are allowed (2-50 characters).",
+      });
+    }
+
     const existing = await pool.query("SELECT id FROM users WHERE email = $1", [email]);
     if (existing.rows.length > 0) {
       return res.status(409).json({ error: "An account with this email already exists." });
     }
 
-    // hash the password before saving (never store plain text passwords!)
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await pool.query(
       "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email, created_at",
-      [name, email, hashedPassword]
+      [trimmedName, email, hashedPassword]
     );
 
     const user = result.rows[0];
@@ -36,7 +43,6 @@ async function signup(req, res) {
   }
 }
 
-// ---------- LOGIN ----------
 async function login(req, res) {
   try {
     const { email, password } = req.body;
@@ -69,7 +75,6 @@ async function login(req, res) {
   }
 }
 
-// ---------- GET LOGGED-IN USER PROFILE ----------
 async function getProfile(req, res) {
   try {
     const result = await pool.query(
@@ -86,7 +91,6 @@ async function getProfile(req, res) {
   }
 }
 
-// helper: create a signed JWT for a user
 function generateToken(user) {
   return jwt.sign(
     { id: user.id, email: user.email },
