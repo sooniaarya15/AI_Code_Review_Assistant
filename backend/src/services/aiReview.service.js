@@ -1,4 +1,5 @@
-const OPENAI_URL = "https://api.openai.com/v1/chat/completions";
+// Groq's API is OpenAI-compatible, but uses a different base URL and different model names.
+const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 async function runAiReview(sourceCode, language) {
   const prompt = `
@@ -27,14 +28,14 @@ CODE:
 ${sourceCode}
 `;
 
-  const response = await fetch(OPENAI_URL, {
+  const response = await fetch(GROQ_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
     },
     body: JSON.stringify({
-      model: "gpt-4o-mini",
+      model: "llama-3.3-70b-versatile",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.2,
     }),
@@ -42,7 +43,7 @@ ${sourceCode}
 
   if (!response.ok) {
     const errText = await response.text();
-    throw new Error(`OpenAI API error: ${errText}`);
+    throw new Error(`Groq API error: ${errText}`);
   }
 
   const data = await response.json();
