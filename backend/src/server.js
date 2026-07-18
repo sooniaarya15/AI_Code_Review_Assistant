@@ -18,8 +18,8 @@ const allowedOrigins = [
 app.use(cors({
   origin: allowedOrigins,
   credentials: true,
-}));                        // allows frontend (different port) to call this API
-app.use(express.json());      // allows server to read JSON in request body
+}));                       
+app.use(express.json());      
 
 // Health check route — visit this to confirm server is running
 app.get("/", (req, res) => {

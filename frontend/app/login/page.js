@@ -6,6 +6,7 @@ import { apiFetch, setToken } from "../../lib/api";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
 
@@ -41,13 +42,22 @@ export default function LoginPage() {
         />
 
         <label className="block text-sm text-gray-600 mb-1">Password</label>
-        <input
-          type="password"
-          className="w-full border rounded-lg px-3 py-2 mb-6"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+        <div className="relative mb-6">
+          <input
+            type={showPassword ? "text" : "password"}
+            className="w-full border rounded-lg px-3 py-2 pr-16 border-gray-300"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium text-blue-600 hover:text-blue-800 px-2 py-1"
+          >
+            {showPassword ? "Hide" : "Show"}
+          </button>
+        </div>
 
         <button className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
           Login

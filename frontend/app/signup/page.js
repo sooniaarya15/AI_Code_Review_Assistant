@@ -9,12 +9,11 @@ export default function SignupPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [nameTouched, setNameTouched] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
 
-  // Real-time check — runs on every keystroke, but we only SHOW the
-  // message once the user has actually started typing (nameTouched)
   const isNameValid = name.trim().length === 0 ? true : NAME_REGEX.test(name.trim());
 
   function handleNameChange(e) {
@@ -77,13 +76,22 @@ export default function SignupPage() {
         />
 
         <label className="block text-sm text-gray-600 mb-1">Password</label>
-        <input
-          type="password"
-          className="w-full border rounded-lg px-3 py-2 mb-6"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+        <div className="relative mb-6">
+          <input
+            type={showPassword ? "text" : "password"}
+            className="w-full border rounded-lg px-3 py-2 pr-16 border-gray-300"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium text-blue-600 hover:text-blue-800 px-2 py-1"
+          >
+            {showPassword ? "Hide" : "Show"}
+          </button>
+        </div>
 
         <button
           disabled={nameTouched && !isNameValid}
