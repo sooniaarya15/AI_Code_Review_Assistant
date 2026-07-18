@@ -15,7 +15,8 @@ export default function ProjectDetailPage() {
   const [project, setProject] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [staticLoading, setStaticLoading] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
 
   useEffect(() => {
     loadProject();
@@ -41,7 +42,7 @@ export default function ProjectDetailPage() {
   }
 
   async function runStaticAnalysis() {
-    setLoading(true);
+    setStaticLoading(true);
     setError("");
     try {
       await apiFetch(`/reviews/analyze/${id}`, { method: "POST" });
@@ -49,12 +50,12 @@ export default function ProjectDetailPage() {
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false);
+      setStaticLoading(false);
     }
   }
 
   async function runAiReview() {
-    setLoading(true);
+    setAiLoading(true);
     setError("");
     try {
       await apiFetch(`/reviews/ai-analyze/${id}`, { method: "POST" });
@@ -62,7 +63,7 @@ export default function ProjectDetailPage() {
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false);
+      setAiLoading(false);
     }
   }
 
@@ -85,17 +86,17 @@ export default function ProjectDetailPage() {
         <div className="flex gap-3 mb-8">
           <button
             onClick={runStaticAnalysis}
-            disabled={loading}
+            disabled={staticLoading || aiLoading}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
           >
-            {loading ? "Running..." : "Run Static Analysis"}
+            {staticLoading ? "Running..." : "Run Static Analysis"}
           </button>
           <button
             onClick={runAiReview}
-            disabled={loading}
+            disabled={staticLoading || aiLoading}
             className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50"
           >
-            {loading ? "Running..." : "Run AI Review"}
+            {aiLoading ? "Running..." : "Run AI Review"}
           </button>
         </div>
 
