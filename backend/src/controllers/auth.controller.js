@@ -91,6 +91,41 @@ async function getProfile(req, res) {
   }
 }
 
+// ---------- RESET PASSWORD ----------
+// NOTE: This is a simplified version — it only verifies that the email
+// exists, then sets a new password. A production app would first email
+// the user a one-time verification code/link before allowing this.
+async function resetPassword(req, res) {
+  try {
+    const { email, newPassword } = req.body;
+
+    if (!email || !newPassword) {
+      return res.status(400).json({ error: "Email and new password are required." });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: "Password must be at least 6 characters long." });
+    }
+
+    const result = await pool.query("SELECT id FROM users WHERE email = $1", [email]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "No account found with this email." });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await pool.query("UPDATE users SET password = $1 WHERE email = $2", [
+      hashedPassword,
+      email,
+    ]);
+
+    return res.json({ message: "Password has been reset successfully. You can now log in." });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Something went wrong while resetting the password." });
+  }
+}
+
 function generateToken(user) {
   return jwt.sign(
     { id: user.id, email: user.email },
@@ -99,4 +134,4 @@ function generateToken(user) {
   );
 }
 
-module.exports = { signup, login, getProfile };
+module.exports = { signup, login, getProfile, resetPassword };
