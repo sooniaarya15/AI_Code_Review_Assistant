@@ -1,7 +1,6 @@
 const pool = require("../config/db");
 const { runAiReview } = require("../services/aiReview.service");
 
-// ---------- RUN AI REVIEW ON A PROJECT ----------
 async function aiAnalyzeProject(req, res) {
   try {
     const userId = req.user.id;
