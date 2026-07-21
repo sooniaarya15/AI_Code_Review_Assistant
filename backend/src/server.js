@@ -21,7 +21,6 @@ app.use(cors({
 }));                       
 app.use(express.json());      
 
-// Health check route — visit this to confirm server is running
 app.get("/", (req, res) => {
   res.json({ message: "AI Code Review Assistant API is running 🚀" });
 });
